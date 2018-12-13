@@ -1,0 +1,40 @@
+# Using "workdir:" Snakemake directive to set a working directory 
+# that will be created and where output will be redirected
+
+## 1- Capture current working directory
+## 2- Use Snakemake 'workdir:' instruction
+## 3- Change initial input path
+
+rule run_all:
+  input: 
+    'data/metaspades_output/contigs.fasta'
+
+rule run_trimmomatic:
+  input:
+    r1='data/s1_r1.fastq.gz',
+    r2='data/s1_r2.fastq.gz'
+  output: 
+    'data/output_1P.fastq.gz',
+    'data/output_2P.fastq.gz'
+  shell:installation
+    '''
+    TRIMMOMATIC_ADAPTER_PATH=$CONDA_PREFIX/share/trimmomatic-0.38-1/adapters/TruSeq3-PE.fa 
+    trimmomatic PE -threads 4 -phred33 \
+      -trimlog data/trim.log \
+      {input.r1} {input.r2} \
+      -baseout data/output.fastq.gz \
+      ILLUMINACLIP:$TRIMMOMATIC_ADAPTER_PATH:2:30:10:1:true \
+      LEADING:5 TRAILING:5 MINLEN:50 HEADCROP:26
+    '''
+
+rule run_metaspades:installation
+  input:
+    r1='data/output_1P.fastq.gz',
+    r2='data/output_2P.fastq.gz'
+  output:
+    'data/metaspades_output/contigs.fasta'
+  shell:
+    '''
+    metaspades.py -1 {input[0]} -2 {input[1]} -o data/metaspades_output --tmp-dir data/metaspades_output/tmp -t 4
+    '''
+

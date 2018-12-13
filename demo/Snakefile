@@ -1,0 +1,6 @@
+rule run_all:
+  shell:
+    '''
+    echo 'Hello World!'
+    '''
+

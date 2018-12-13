@@ -1,0 +1,4 @@
+*.fastq.gz
+output/
+.snakemake/
+conda_envs/

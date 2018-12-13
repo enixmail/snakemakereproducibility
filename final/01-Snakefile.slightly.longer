@@ -1,0 +1,11 @@
+rule run_all:
+  input: 'a_flag_file.txt'
+
+rule generate_an_output:
+  output: 'a_flag_file.txt'
+  shell:
+    '''
+    touch a_flag_file.txt
+    echo 'Hello World!'
+    '''
+

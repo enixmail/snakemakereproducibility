@@ -1,0 +1,27 @@
+# Problematic case: Snakemake wildcards and Python's String format() function
+# Introduction to expand()
+# Introduction to 'threads:' section
+
+import os
+cwd = os.getcwd()
+workdir: 'temp'
+
+rule run_all:
+  input:
+    'sample_a/result.txt',
+    'sample_b/result.txt',
+    'sample_c/result.txt'
+
+rule pick_sample:
+  input:
+    '{}/data/{sample}.txt'.format(cwd)
+  output:
+    '{sample}/result.txt'
+  threads:1
+  shell:
+    '''
+    sleep 3
+    cat {input[0]} > {output[0]}
+    '''
+
+
